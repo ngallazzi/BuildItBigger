@@ -1,0 +1,2 @@
+// Multiproject build
+include ':app', ':javajokes'

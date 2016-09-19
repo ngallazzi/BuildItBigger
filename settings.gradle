@@ -1,2 +1,2 @@
 // Multiproject build
-include ':app', ':javajokes'
+include ':app', ':javajokes', ':androidjokes', ':jokesbackend'

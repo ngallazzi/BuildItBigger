@@ -54,6 +54,7 @@ public class MainActivityFragment extends Fragment implements EndpointsAsyncTask
         btTellJoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mEndpointAsyncTask = new EndpointsAsyncTask();
                 mEndpointAsyncTask.execute(mContext);
             }
         });

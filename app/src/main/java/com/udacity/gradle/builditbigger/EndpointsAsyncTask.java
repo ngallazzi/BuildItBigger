@@ -20,6 +20,20 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
     private static EndpointsAsyncTaskListener mListener;
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mListener.onTaskStarted();
+    }
+
+    public void setListener (EndpointsAsyncTaskListener listener){
+        mListener = listener;
+    }
+
+    public void removeListener (){
+        mListener = null;
+    }
+
+    @Override
     protected String doInBackground(Context... params) {
         if(myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
@@ -37,21 +51,13 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
         }
     }
 
-    public EndpointsAsyncTask setListener(EndpointsAsyncTaskListener listener){
-        mListener = listener;
-        return this;
-    }
     @Override
     protected void onPostExecute(String result) {
-        if (mListener!=null){
-            mListener.onExecutionFinished(result);
-        }
-        Intent intent = new Intent(context,JokesDisplayActivity.class);
-        intent.putExtra(context.getString(R.string.joke_id),result);
-        context.startActivity(intent);
+        mListener.onExecutionFinished(result);
     }
 
     public interface EndpointsAsyncTaskListener{
+        void onTaskStarted();
         void onExecutionFinished(String joke);
     }
 }

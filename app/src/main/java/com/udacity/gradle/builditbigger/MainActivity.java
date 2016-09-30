@@ -1,10 +1,20 @@
 package com.udacity.gradle.builditbigger;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.nikogalla.androidjokes.JokesDisplayActivity;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -13,8 +23,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -37,12 +47,5 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    public void tellJoke(View view){
-        new EndpointsAsyncTask().execute(this);
-    }
-
-
-
-
 }
+

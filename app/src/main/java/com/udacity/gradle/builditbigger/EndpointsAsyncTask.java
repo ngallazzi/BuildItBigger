@@ -16,7 +16,6 @@ import java.io.IOException;
  */
 public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
     private static EndpointsAsyncTaskListener mListener;
 
     @Override
@@ -40,9 +39,6 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
                     .setRootUrl("https://builditbigger-143910.appspot.com/_ah/api/");
             myApiService = builder.build();
         }
-
-        context = params[0];
-
         try {
             String joke = myApiService.getJoke().execute().getData();
             return joke;

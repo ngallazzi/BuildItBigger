@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.nikogalla.androidjokes.JokesDisplayActivity;
 import com.udacity.gradle.builditbigger.EndpointsAsyncTask;
+import com.udacity.gradle.builditbigger.MainActivity;
 import com.udacity.gradle.builditbigger.R;
 
 
@@ -28,24 +29,25 @@ public class MainActivityFragment extends Fragment implements EndpointsAsyncTask
     Context mContext;
     ProgressDialog mProgressDialog;
     EndpointsAsyncTask mEndpointAsyncTask;
-    private InterstitialAd mInterstitial;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        mEndpointAsyncTask = new EndpointsAsyncTask();
-        mEndpointAsyncTask.setListener(this);
-        mInterstitial = new InterstitialAd(mContext);
-        mInterstitial.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mInterstitialAd = new InterstitialAd(mContext);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+        requestNewInterstitial();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mEndpointAsyncTask!=null){
-            mEndpointAsyncTask.removeListener();
-        }
     }
 
     public MainActivityFragment() {
@@ -66,20 +68,14 @@ public class MainActivityFragment extends Fragment implements EndpointsAsyncTask
         mAdView.loadAd(adRequest);
 
         btTellJoke = (Button) root.findViewById(R.id.btTellJoke);
-        mEndpointAsyncTask = new EndpointsAsyncTask();
         btTellJoke.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mEndpointAsyncTask = new EndpointsAsyncTask();
+                mEndpointAsyncTask.setListener(MainActivityFragment.this);
                 mEndpointAsyncTask.execute(mContext);
             }
         });
-
-        // Interstitial ad
-        AdRequest request = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        mInterstitial.loadAd(request);
-
         return root;
     }
 
@@ -90,15 +86,16 @@ public class MainActivityFragment extends Fragment implements EndpointsAsyncTask
 
     @Override
     public void onExecutionFinished(final String joke) {
+        mEndpointAsyncTask.removeListener();
         if (mProgressDialog!=null)
             mProgressDialog.dismiss();
         // Showing ad
-        if (mInterstitial.isLoaded()){
-            mInterstitial.show();
-            mInterstitial.setAdListener(new AdListener() {
+        if (mInterstitialAd.isLoaded()){
+            mInterstitialAd.show();
+            mInterstitialAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdClosed() {
-                    // Showing joke in a new activity
+                       // Showing joke in a new activity
                     Intent intent = new Intent(mContext,JokesDisplayActivity.class);
                     intent.putExtra(mContext.getString(R.string.joke_id),joke);
                     mContext.startActivity(intent);
@@ -106,4 +103,12 @@ public class MainActivityFragment extends Fragment implements EndpointsAsyncTask
             });
         }
     }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
 }

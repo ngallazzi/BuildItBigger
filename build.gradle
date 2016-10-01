@@ -18,3 +18,9 @@ allprojects {
         jcenter()
     }
 }
+
+task runUdacityTests (dependsOn:[
+        ':jokesbackend:appengineRun',
+        ':app:connectedAndroidTest',
+        ':jokesbackend:appengineStop'
+])
